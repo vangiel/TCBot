@@ -1,73 +1,49 @@
 
 #include "motors.h"
-//LED RGB
-const int LEDB = 2;
-const int LEDR = 3;
-const int LEDG = 4;
+#include "sensors.h"
 
-//Sensors
-const int sensorPin = A1; //Read SHARP IR sensor
-const int edgeR = A5;     //Read Right edge IR sensor
-const int edgeL = A4;     //Read Left edge IR sensor
+//Objects creations
 
-motor tmotor;
+motor tmotor(42);
+sensor tsensor;
+ledRGB tledRGB;
 
 //Other variables
-int power1, power2;    // store the value given to the PWM
-int distance, dl, dr; //Distance measured by the sensor
-float volts = 0.0; //Volts measured by the sensor
 
 void setup() {
 
-  digitalWrite(LEDR, HIGH);
-  digitalWrite(LEDG, LOW);
-  digitalWrite(LEDB, LOW);
-
   tmotor.ini();
-  tmotor.stop();
+  tmotor.stopm();
 
-  Serial.begin(9600); // start the serial port
+  //  Serial.begin(9600); // start the serial port
 
 }
 
 void loop() {
 
-  // Read the IR sensor:
-  volts = analogRead(sensorPin)*0.0048828125;  // value from sensor * (5/1024)
-  distance = 13*pow(volts, -1); // worked out from datasheet graph
-  delay(1); // slow down 
-  
-  //power = map(analogRead(sensorPin),0,30,0,255);
-  power1 = 40;
+  tsensor.readSensors();
 
-  //read edge sensors
-  dr=analogRead(edgeR);
-  dl=analogRead(edgeL);
-  
-  digitalWrite(enablePin, HIGH);
-  analogWrite(motor1PinA, power1);
-  analogWrite(motor1PinB, 0);    
-  analogWrite(motor2PinA, power1);
-  analogWrite(motor2PinB, 0);
+  //  Serial.print(analogRead(edgeL));
+  //  Serial.print(" | ");
+  //  Serial.println(analogRead(edgeR));
+  //  delay(500);
 
-//  Serial.print(analogRead(edgeL));
-//  Serial.print(" | ");
-//  Serial.println(analogRead(edgeR));
-//  delay(500);
-
-  if (dr>900){
-    analogWrite(motor1PinA, power1);
-    analogWrite(motor1PinB, 0);    
-    analogWrite(motor2PinA, 0);
-    analogWrite(motor2PinB, 0);
+  if (tsensor.dr > edgeThreshold || tsensor.dl > edgeThreshold) {
+    if (tsensor.dr > edgeThreshold) {
+      tmotor.turnLeft();
+    }
+    if (tsensor.dl > edgeThreshold) {
+      tmotor.turnRight();
+    }
   }
-//  if ((distance <= 25) && (distance > 10))
-//  {    
-//    // if the switch is high, motor will turn on one direction:
-//    analogWrite(motor1PinA, power1);
-//    analogWrite(motor1PinB, 0);    
-//    analogWrite(motor2PinA, 0);
-//    analogWrite(motor2PinB, 0);
-//  }
+  else {
+    tmotor.goStraight();
+  }
+
+  //    if ((tsensor.distance <= 25) && (tsensor.distance > 10))
+  //    {
+  //      // if the switch is high, motor will turn on one direction:
+  //      tmotor.turnRight();
+  //    }
 }
 
