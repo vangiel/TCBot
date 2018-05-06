@@ -17,6 +17,13 @@ void sensor::readSensors() {
 
 /////////////LEDRGB CLASS DEFINITIONS//////////////////
 
+void ledRGB::ini() {
+  pinMode(LEDR, OUTPUT);
+  pinMode(LEDR, OUTPUT);
+  pinMode(LEDR, OUTPUT);
+  this->allOff();
+}
+
 void ledRGB::allOff() {
   digitalWrite(LEDR, LOW);
   digitalWrite(LEDG, LOW);
@@ -25,8 +32,8 @@ void ledRGB::allOff() {
 
 void ledRGB::blue() {
   digitalWrite(LEDR, LOW);
-  digitalWrite(LEDG, HIGH);
-  digitalWrite(LEDB, LOW);
+  digitalWrite(LEDG, LOW);
+  digitalWrite(LEDB, HIGH);
 }
 
 void ledRGB::green() {

@@ -33,9 +33,11 @@ class ledRGB {
 
   public:
     void allOff();
+    void ini();
     void blue();
     void green();
     void red();
+    void mixColor(char r, char g, char b);
 };
 
 #endif
